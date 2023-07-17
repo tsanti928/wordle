@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Wordle Helper</title>
+        <style>
+            .outer-container {
+                display: grid;
+                width: 70%;
+                height: 70%;
+                grid-template-rows: 1fr 1fr 1fr 1fr;
+                margin: auto;
+                padding: 5px;
+                grid-gap: 5px;
+                align-items: center;
+                justify-items: left;
+            }
+            .three-rows{
+                display: grid;
+                grid-template-rows: 1fr 1fr 1fr;
+                align-items: center;
+                justify-items: stretch;
+                height: 100%;
+                width: 100%;
+            }
+            .in-position {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+                column-gap: 5px;
+                height: 100%;
+            }
+            .out-of-position, .bad, .suggest, .results {
+                display: grid;
+                grid-template-columns: 5fr;
+                height: 100%;
+                padding: 5px;
+                text-align: center;
+                word-break: break-word;
+                font-size: 16px;
+                justify-self: stretch;
+            }
+            input {
+                text-align: center;
+                box-sizing: border-box;
+                width: 100%;
+                height: 100%;
+                font-size: 16px;
+            }
+            h1, p {
+                text-align: left;
+                margin: 0;
+            }
+            .green {
+                border-color: green;
+                border-style: solid;
+            }
+            .yellow {
+                border-color: #dddd5e;
+                border-style: solid;
+            }
+        </style>
+    </head>
+    <body>
+        <script>
+            async function solve(url){
+                let request = {
+                    "KnownInPosition" : {},
+                    "KnownOutOfPosition": document.getElementById("out-of-position").value.toLowerCase(),
+                    "KnownBad": document.getElementById("bad").value.toLowerCase()
+                }
+                for (let i = 0; i < 5; i++) {
+                    let letter = document.getElementById(`letter${i}`).value.toLowerCase()
+                    if(letter === "")
+                        continue
+
+                    request["KnownInPosition"][i] = letter
+                }
+
+                try {
+                    const response = await fetch(url,
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(request),
+                    })
+                    const text = await response.text()
+                    let replaced = text.replace(/,/g, ' ').replace(/\[/g, '').replace(/\]/g, '').replace(/\"/g, '')
+                    document.getElementById("reply").setHTML(replaced)
+                } catch(e) {
+                    const text = `Unable to connect to ${url}. Is the server started and is the URL configured to use the correct port?`
+                    document.getElementById("reply").setHTML(text)
+                }
+            }
+            function validate(event){
+                return (event.charCode >= 65 && event.charCode <= 90) || (event.charCode >= 97 && event.charCode <= 122)
+            }
+        </script>
+        <div class="outer-container">
+            <div class="three-rows">
+                <h1>Placed letters</h1>
+                <p>Place them in the correct order.</p>
+                <div class="in-position">
+                    <input type="text" class="green" maxlength="1" id='letter0' onkeypress='return validate(event)'>
+                    <input type="text" class="green" maxlength="1" id='letter1' onkeypress='return validate(event)'>
+                    <input type="text" class="green" maxlength="1" id='letter2' onkeypress='return validate(event)'>
+                    <input type="text" class="green" maxlength="1" id='letter3' onkeypress='return validate(event)'>
+                    <input type="text" class="green" maxlength="1" id='letter4' onkeypress='return validate(event)'>
+                </div>
+            </div>
+
+            <div class="three-rows">
+                <h1>Valid letters</h1>
+                <p>Place them in any order.</p>
+                <div class="out-of-position">
+                    <input type="text" class="yellow" maxlength="5" id='out-of-position' onkeypress='return validate(event)'>
+                </div>
+            </div>
+
+            <div class="three-rows">
+                <h1>Bad letters</h1>
+                <p>Place them in any order.</p>
+                <div class="bad">
+                    <input type="text" maxlength="26" id='bad' onkeypress='return validate(event)'>
+                </div>
+            </div>
+
+            <div class="suggest">
+                <button onclick="solve('http://localhost:6500/suggest')">Suggest (Go)</button>
+                <button onclick="solve('http://localhost:6501/suggest')">Suggest (C++)</button>
+            </div>
+
+            <div class="results">
+                <p id="reply"></p>
+            </div>
+        </div>
+
+    </body>
+</html>
