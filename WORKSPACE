@@ -39,8 +39,7 @@ http_archive(
 
 http_archive(
     name = "cpp-httplib",
-    urls = ["https://github.com/yhirose/cpp-httplib/archive/refs/heads/master.zip"],
-    build_file = "@//:cpp-httplib.BUILD",
+    urls = ["https://github.com/tsanti928/cpp-httplib/archive/refs/heads/master.zip"],
     strip_prefix = "cpp-httplib-master",
 )
 
