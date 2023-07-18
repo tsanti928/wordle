@@ -209,6 +209,7 @@ int main(int argc, char* argv[]){
     res.set_header("Access-Control-Max-Age", "3600");
   });
   svr.Post("/suggest", [&word_set](const httplib::Request& req, httplib::Response& res) {
+    res.set_header("Access-Control-Allow-Origin", "*");
     json data = json::parse(req.body);
 
     WireChoices wire_choices;

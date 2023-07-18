@@ -23,7 +23,3 @@ From the git root:
 Assumes `npm live-server` is installed.
 
 `live-server .`
-
-## Known Issues
-
-Access to the C++ backend from the browser suffers from CORS issues. CURL or Postman are able to get around this limitation.
