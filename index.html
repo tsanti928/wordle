@@ -87,10 +87,10 @@
                     })
                     const text = await response.text()
                     let replaced = text.replace(/,/g, ' ').replace(/\[/g, '').replace(/\]/g, '').replace(/\"/g, '')
-                    document.getElementById("reply").setHTML(replaced)
+                    document.getElementById("reply").innerText = replaced
                 } catch(e) {
                     const text = `Unable to connect to ${url}. Is the server started and is the URL configured to use the correct port?`
-                    document.getElementById("reply").setHTML(text)
+                    document.getElementById("reply").innerText = text
                 }
             }
             function validate(event){
@@ -127,8 +127,8 @@
             </div>
 
             <div class="suggest">
-                <button onclick="solve('http://localhost:6500/suggest')">Suggest (Go)</button>
-                <button onclick="solve('http://localhost:6501/suggest')">Suggest (C++)</button>
+                <button onclick="solve('http://192.168.1.15:6500/suggest')">Suggest (Go)</button>
+                <button onclick="solve('http://192.168.1.15:6501/suggest')">Suggest (C++)</button>
             </div>
 
             <div class="results">
